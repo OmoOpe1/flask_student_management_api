@@ -52,11 +52,14 @@ class CreateStudent(Resource):
 @student_namespace.route('/student/<int:student_id>')
 class GetUpdateDeleteStudent(Resource):
 
+    @student_namespace.marshal_with(user_model)
     def get(self, student_id):
         """
             Get student by id.
         """
-        pass
+        student = User.query.get(student_id)
+
+        return student, HTTPStatus.OK
 
     def put(self, student_id):
         """
