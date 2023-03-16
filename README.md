@@ -12,11 +12,3 @@
 | *POST* | ```/courses/courses/``` | _Add a new course_ | _superuser_ |
 | *GET* | ```/courses/course/{course_id}/{course_id}/``` | _Get a course_ | _All users_ |
 | *GET* | ```/courses/course/{course_id}/students``` | _Get all the students in a course_ | _superuser_ |
-| *GET* | ```/orders/orders/``` | _List all orders made_ | __ |
-| *POST* | ```/orders/orders/``` | _Place an order_ | __ |
-| *PUT* | ```/orders/order/update/{order_id}``` | _Update an order_ | __ |
-| *PUT* | ```/orders/order/status/{order_id}``` | _Update order status_ | __ |
-| *DELETE* | ```/orders/order/status/{order_id}``` | _Delete/Remove an order_ | __ |
-| *GET* | ```/orders/user/{user_id}/orders``` | _Get all the users orders_ | __ |
-| *GET* | ```/orders/order/{order_id}``` | _Retrieve an order_ | __ |
-| *GET* | ```/orders/user/order/{order_id}``` | _Get users specific order_ | __ |
