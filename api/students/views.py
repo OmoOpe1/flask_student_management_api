@@ -1,23 +1,53 @@
-from flask_restx import Namespace, Resource
-
+from flask_restx import Namespace, Resource, fields
+from http import HTTPStatus
+from flask import request
+from werkzeug.security import generate_password_hash
+from ..models.users import User
 
 student_namespace=Namespace('students', description="namespace for students")
+new_user_model=student_namespace.model(
+    'User', {
+        'id': fields.Integer(),
+        'name': fields.String(required=True, description="A username"),
+        'email': fields.String(required=True, description="An email"),
+        'password': fields.String(required=True, description="A password")
+    })  
+
+user_model=student_namespace.model(
+    'User', {
+        'id': fields.Integer(),
+        'name': fields.String(required=True, description="A username"),
+        'email': fields.String(required=True, description="An email"),
+        'date_created': fields.String()
+    })  
 
 
 @student_namespace.route('/students')
 class CreateStudent(Resource):
 
+    @student_namespace.marshal_with(user_model)
     def get(self):
         """
             Fetch students.
         """
-        pass
+        students = User.query.all()
+        return students, HTTPStatus.OK
 
+    @student_namespace.expect(new_user_model)
+    @student_namespace.marshal_with(user_model)
     def post(self):
         """
             Create a new Student.
         """
-        pass
+        data = request.get_json()
+        new_student = User(
+            name=data.get('name'),
+            email=data.get('email'),
+            password_hash=generate_password_hash(data.get('password'))
+        )
+        new_student.save()
+        return new_student, HTTPStatus.CREATED
+
 
 @student_namespace.route('/student/<int:student_id>')
 class GetUpdateDeleteStudent(Resource):

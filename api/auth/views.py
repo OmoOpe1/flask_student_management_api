@@ -4,31 +4,16 @@ from http import HTTPStatus
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required
 from ..models.users import User
+from ..students.views import user_model, new_user_model
 
 
 auth_namespace=Namespace('auth', description="namespace for authentication")
-signup_model=auth_namespace.model(
-    'Signup', {
-        'id': fields.Integer(),
-        'name': fields.String(required=True, description="A username"),
-        'email': fields.String(required=True, description="An email"),
-        'password': fields.String(required=True, description="A password"),
-    }
-) 
-user_model=auth_namespace.model(
-    'User', {
-        'id': fields.Integer(),
-        'name': fields.String(required=True, description="A username"),
-        'email': fields.String(required=True, description="An email"),
-        'date_created': fields.String()
-    }
-)  
+signup_model=new_user_model
 login_model=auth_namespace.model(
     'Login', {
         'password': fields.String(required=True, description="A password"),
         'email': fields.String(required=True, description="An email")
-    }
-)  
+    })  
 
 @auth_namespace.route('/signup')
 class SignUp(Resource):
