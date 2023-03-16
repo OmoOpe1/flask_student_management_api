@@ -47,16 +47,21 @@ class CreateCourse(Resource):
             code=data.get('code'),
             teacher=data.get('teacher'))
         new_course.save()
+
         return new_course, HTTPStatus.CREATED
+
 
 @course_namespace.route('/course/<int:course_id>')
 class GetCourse(Resource):
 
+    @course_namespace.marshal_with(course_model)
     def get(self, course_id):
         """
             Get course by id.
         """
-        pass
+        course = Course.query.get(course_id)
+
+        return course, HTTPStatus.OK
 
 @course_namespace.route('/course/<int:course_id>/students')
 class CreateCourse(Resource):
