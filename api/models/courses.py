@@ -12,3 +12,7 @@ class Course(db.Model):
     
     def __repr__(self) -> str:
         return f"<Course {self.code}>"
+    
+    def save(self):
+        db.session.add(self)
+        db.session.commit()

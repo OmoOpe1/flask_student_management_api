@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from http import HTTPStatus
+from flask import request
 from ..models.courses import Course
 
 
@@ -40,7 +41,13 @@ class CreateCourse(Resource):
         """
             Create a new course.
         """
-        pass
+        data = request.get_json()
+        new_course = Course(
+            name=data.get('name'),
+            code=data.get('code'),
+            teacher=data.get('teacher'))
+        new_course.save()
+        return new_course, HTTPStatus.CREATED
 
 @course_namespace.route('/course/<int:course_id>')
 class GetCourse(Resource):
