@@ -4,6 +4,7 @@ from flask import request
 from werkzeug.security import generate_password_hash
 from flask_jwt_extended import jwt_required
 from ..models.users import User
+from ..utils import db
 
 student_namespace=Namespace('students', description="namespace for students")
 new_user_model=student_namespace.model(
@@ -12,6 +13,12 @@ new_user_model=student_namespace.model(
         'name': fields.String(required=True, description="A username"),
         'email': fields.String(required=True, description="An email"),
         'password': fields.String(required=True, description="A password")
+    }) 
+
+edit_user_model=student_namespace.model(
+    'User', {
+        'name': fields.String(required=False, description="A username"),
+        'email': fields.String(required=False, description="An email")
     })  
 
 user_model=student_namespace.model(
@@ -66,11 +73,21 @@ class GetUpdateDeleteStudent(Resource):
         return student, HTTPStatus.OK
 
     @jwt_required()
+    @student_namespace.marshal_with(user_model)
+    @student_namespace.expect(edit_user_model)
     def put(self, student_id):
         """
             Update student by id.
         """
-        pass
+        student = User.get_by_id(student_id)
+        data = student_namespace.payload
+        if ('name' in data):
+            student.name = data['name']
+        if ('email' in data):
+            student.email = data['email']
+
+        db.session.commit()
+        return student, HTTPStatus.OK
 
     @jwt_required()
     def delete(self, student_id):
