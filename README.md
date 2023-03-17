@@ -7,6 +7,8 @@
 | *POST* | ```/students/students/``` | _Create a new student_ | _superuser_ |
 | *GET* | ```/students/student/{student_id}/``` | _Get specific student_ | _All users_ |
 | *PUT* | ```/students/student/{student_id}``` | _Edit student information_ | _All users_ |
+| *POST* | ```/students/student/{student_id}/course/{course_id}/register``` | _Register student to course_ | _All users_ |
+| *GET* | ```/students/student/{student_id}/course/{course_id}/grade``` | _Register student to course_ | _All users_ |
 | *DELETE* | ```/students/student/{student_id}/``` | _Delete student_ | _superuser_ |
 | *GET* | ```/courses/courses``` | _Get courses_ | _All users_ |
 | *POST* | ```/courses/courses/``` | _Add a new course_ | _superuser_ |

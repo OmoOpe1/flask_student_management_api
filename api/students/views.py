@@ -4,6 +4,7 @@ from flask import request
 from werkzeug.security import generate_password_hash
 from flask_jwt_extended import jwt_required
 from ..models.users import User
+from ..models.courses import Course
 from ..utils import db
 
 student_namespace=Namespace('students', description="namespace for students")
@@ -97,3 +98,20 @@ class GetUpdateDeleteStudent(Resource):
         student = User.get_by_id(student_id)
         student.delete()
         return { 'message': f"user {student.email} deleted successfully"}, HTTPStatus.OK
+    
+@student_namespace.route('/student/<int:student_id>/course/<int:course_id>/register')
+class StudentRegisterCourse(Resource):
+
+    @jwt_required()
+    @student_namespace.marshal_with(user_model)
+    def post(self, student_id, course_id):
+        """
+            Get student with id to course with id.
+        """
+        student = User.get_by_id(student_id)
+        course = Course.get_by_id(course_id)
+
+        student.coursess.append(course)
+        student.save()
+
+        return student, HTTPStatus.OK
