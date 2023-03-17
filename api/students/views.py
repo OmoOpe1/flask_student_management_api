@@ -94,4 +94,6 @@ class GetUpdateDeleteStudent(Resource):
         """
             Delete student by id.
         """
-        pass
+        student = User.get_by_id(student_id)
+        student.delete()
+        return { 'message': f"user {student.email} deleted successfully"}, HTTPStatus.OK
