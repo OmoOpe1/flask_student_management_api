@@ -2,6 +2,7 @@ from flask_restx import Namespace, Resource, fields
 from http import HTTPStatus
 from flask import request
 from werkzeug.security import generate_password_hash
+from flask_jwt_extended import jwt_required
 from ..models.users import User
 
 student_namespace=Namespace('students', description="namespace for students")
@@ -25,6 +26,7 @@ user_model=student_namespace.model(
 @student_namespace.route('/students')
 class CreateStudent(Resource):
 
+    @jwt_required()
     @student_namespace.marshal_with(user_model)
     def get(self):
         """
@@ -33,6 +35,7 @@ class CreateStudent(Resource):
         students = User.query.all()
         return students, HTTPStatus.OK
 
+    @jwt_required()
     @student_namespace.expect(new_user_model)
     @student_namespace.marshal_with(user_model)
     def post(self):
@@ -52,6 +55,7 @@ class CreateStudent(Resource):
 @student_namespace.route('/student/<int:student_id>')
 class GetUpdateDeleteStudent(Resource):
 
+    @jwt_required()
     @student_namespace.marshal_with(user_model)
     def get(self, student_id):
         """
@@ -61,12 +65,14 @@ class GetUpdateDeleteStudent(Resource):
 
         return student, HTTPStatus.OK
 
+    @jwt_required()
     def put(self, student_id):
         """
             Update student by id.
         """
         pass
 
+    @jwt_required()
     def delete(self, student_id):
         """
             Delete student by id.
