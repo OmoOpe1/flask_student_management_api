@@ -27,7 +27,7 @@ course_model=course_namespace.model(
 @course_namespace.route('/courses')
 class CreateCourse(Resource):
 
-    @course_namespace.marshal_with(course_model)
+    @course_namespace.marshal_list_with(course_model)
     @jwt_required()
     def get(self):
         """
@@ -44,11 +44,11 @@ class CreateCourse(Resource):
         """
             Create a new course.
         """
-        data = request.get_json()
+        data = course_namespace.payload
         new_course = Course(
-            name=data.get('name'),
-            code=data.get('code'),
-            teacher=data.get('teacher'))
+            name=data['name'],
+            code=data['code'],
+            teacher=data['teacher'])
         new_course.save()
 
         return new_course, HTTPStatus.CREATED
@@ -63,7 +63,7 @@ class GetCourse(Resource):
         """
             Get course by id.
         """
-        course = Course.query.get(course_id)
+        course = Course.get_by_id(course_id)
 
         return course, HTTPStatus.OK
 

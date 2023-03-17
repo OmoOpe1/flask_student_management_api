@@ -1,5 +1,4 @@
 from flask_restx import Namespace, Resource, fields
-from flask import request
 from http import HTTPStatus
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required
@@ -24,11 +23,11 @@ class SignUp(Resource):
         """
             Create a new user account
         """
-        data = request.get_json()
+        data = auth_namespace.payload
         new_user = User(
-            name=data.get('name'),
-            email=data.get('email'),
-            password_hash=generate_password_hash(data.get('password'))
+            name=data['name'],
+            email=data['email'],
+            password_hash=generate_password_hash(data['password'])
         )
         new_user.save()
         return new_user, HTTPStatus.CREATED
@@ -43,9 +42,9 @@ class Login(Resource):
         """
             Log in an existing user
         """
-        data = request.get_json()
-        email = data.get('email')
-        password = data.get('password')
+        data = auth_namespace.payload
+        email = data['email']
+        password = data['password']
         user = User.query.filter_by(email = email).first()
         if (user is not None) and check_password_hash(user.password_hash, password):
             access_token = create_access_token(identity=user.email)

@@ -27,7 +27,7 @@ user_model=student_namespace.model(
 class CreateStudent(Resource):
 
     @jwt_required()
-    @student_namespace.marshal_with(user_model)
+    @student_namespace.marshal_list_with(user_model)
     def get(self):
         """
             Fetch students.
@@ -42,11 +42,11 @@ class CreateStudent(Resource):
         """
             Create a new Student.
         """
-        data = request.get_json()
+        data = student_namespace.payload
         new_student = User(
-            name=data.get('name'),
-            email=data.get('email'),
-            password_hash=generate_password_hash(data.get('password'))
+            name=data['name'],
+            email=data['email'],
+            password_hash=generate_password_hash(data['password'])
         )
         new_student.save()
         return new_student, HTTPStatus.CREATED
@@ -61,7 +61,7 @@ class GetUpdateDeleteStudent(Resource):
         """
             Get student by id.
         """
-        student = User.query.get(student_id)
+        student = User.get_by_id(student_id)
 
         return student, HTTPStatus.OK
 
