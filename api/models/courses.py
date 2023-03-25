@@ -1,5 +1,6 @@
-from ..utils import db, user_course
+from ..utils import db
 from datetime import datetime
+from sqlalchemy.orm import relationship
 
 class Course(db.Model):
     __tablename__='courses'
@@ -8,7 +9,8 @@ class Course(db.Model):
     code = db.Column(db.String(6), nullable = False, unique=True)
     teacher = db.Column(db.String(50), nullable=False)
     date_created = db.Column(db.DateTime(), default=datetime.utcnow)
-    students = db.relationship('User', secondary=user_course, backref='coursess')
+    
+    students = relationship("User", secondary="user_course", viewonly=True)
     
     def __repr__(self) -> str:
         return f"<Course {self.code}>"
