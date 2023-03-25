@@ -27,7 +27,8 @@ user_model=student_namespace.model(
         'id': fields.Integer(),
         'name': fields.String(required=True, description="A username"),
         'email': fields.String(required=True, description="An email"),
-        'date_created': fields.String()
+        'date_created': fields.String(),
+        'courses': fields.List(fields.String())
     })  
 
 
@@ -99,19 +100,17 @@ class GetUpdateDeleteStudent(Resource):
         student.delete()
         return { 'message': f"user {student.email} deleted successfully"}, HTTPStatus.OK
     
-@student_namespace.route('/student/<int:student_id>/course/<int:course_id>/register')
+@student_namespace.route('/student/<int:student_id>/courses/register')
 class StudentRegisterCourse(Resource):
 
     @jwt_required()
     @student_namespace.marshal_with(user_model)
-    def post(self, student_id, course_id):
+    def post(self, student_id):
         """
             Get student with id to course with id.
         """
         student = User.get_by_id(student_id)
-        course = Course.get_by_id(course_id)
-
-        student.coursess.append(course)
-        student.save()
+        data = student_namespace.payload
+        student.register_courses(data)
 
         return student, HTTPStatus.OK

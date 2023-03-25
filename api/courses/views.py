@@ -11,6 +11,7 @@ create_course_model=course_namespace.model(
         'id': fields.Integer(),
         'name': fields.String(required=True, description="A username"),
         'code': fields.String(required=True, description="A course code"),
+        'units': fields.Integer(required=True, description="The number of units"),
         'teacher': fields.String(required=True, description="A teacher's name")
     })
 course_model=course_namespace.model(
@@ -18,6 +19,7 @@ course_model=course_namespace.model(
         'id': fields.Integer(),
         'name': fields.String(required=True, description="A username"),
         'code': fields.String(required=True, description="A course code"),
+        'units': fields.Integer(required=True, description="The number of units"),
         'teacher': fields.String(required=True, description="A teacher's name"),
         'date_created': fields.String()
     })
@@ -48,6 +50,7 @@ class CreateCourse(Resource):
         new_course = Course(
             name=data['name'],
             code=data['code'],
+            units=data['units'],
             teacher=data['teacher'])
         new_course.save()
 

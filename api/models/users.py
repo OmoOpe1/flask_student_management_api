@@ -2,6 +2,7 @@ from datetime import datetime
 from sqlalchemy.orm import relationship
 from ..utils import db
 from .user_courses import UserCourse
+from .courses import Course
 
 class User(db.Model):
     __tablename__='users'
@@ -12,7 +13,6 @@ class User(db.Model):
     date_created = db.Column(db.DateTime(), default=datetime.utcnow)
     
     courses = relationship("Course", secondary="user_course", viewonly=True)
-    # coursess = db.relationship('Course', back_populates='studentss')
 
     def __repr__(self) -> str:
         return f"<User {self.name}>"
@@ -26,9 +26,14 @@ class User(db.Model):
         db.session.commit()
 
     def register_courses(self, items):
-        for course, score in items:
-            self.user_courses.append(UserCourse(student=self, course=course, score=score))
-    
+        for course_data in items:
+            code = course_data['course_code']
+            score = course_data['score']
+            course = Course.get_by_code(code)
+            user_course = UserCourse(student=self, course=course, score=score)
+            self.user_courses.append(user_course)
+        db.session.commit()
+
     @classmethod
     def get_by_id(cls, id):
         return cls.query.get_or_404(id)
