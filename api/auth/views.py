@@ -35,6 +35,7 @@ class SignUp(Resource):
             new_user.save()
             return new_user, HTTPStatus.CREATED
         except Exception as e:
+            print(e)
             raise Conflict(f"user with email {data['email']} already exists")
         
 

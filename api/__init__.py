@@ -10,6 +10,7 @@ from .config.config import config_dict
 from .utils import db
 from .models.courses import Course
 from .models.users import User
+from .models.user_courses import UserCourse
 
 
 def create_app(config=config_dict['dev']):
@@ -44,7 +45,8 @@ def create_app(config=config_dict['dev']):
         return {
             'db': db,
             'User': User,
-            'Course': Course
+            'Course': Course,
+            'UserCourse': UserCourse
         }
 
     return app
