@@ -5,7 +5,8 @@ from werkzeug.security import generate_password_hash
 from flask_jwt_extended import jwt_required
 from ..models.users import User
 from ..models.courses import Course
-from ..utils import db
+from ..models.user_courses import UserCourse
+from ..utils import db, get_grade, get_grade_points
 
 student_namespace=Namespace('students', description="namespace for students")
 new_user_model=student_namespace.model(
@@ -29,7 +30,7 @@ user_model=student_namespace.model(
         'email': fields.String(required=True, description="An email"),
         'date_created': fields.String(),
         'courses': fields.List(fields.String())
-    })  
+    }) 
 
 
 @student_namespace.route('/students')
@@ -114,3 +115,26 @@ class StudentRegisterCourse(Resource):
         student.register_courses(data)
 
         return student, HTTPStatus.OK
+    
+@student_namespace.route('/student/<int:student_id>/course/<int:course_id>/grade')
+class StudentGetGrade(Resource):
+
+    @jwt_required()
+    # @student_namespace.marshal_with(student_course_model)
+    def get(self, student_id, course_id):
+        """
+            Get student with id to course with id.
+        """
+        student = User.get_by_id(student_id)
+        course = Course.get_by_id(course_id)
+        print(student, 'student')
+
+        student_course = UserCourse.query.filter_by(course_id=course_id, user_id=student_id).first()
+        grade = get_grade(student_course.score)
+        return { 
+            "score": student_course.score,
+            "grade": grade,
+            "grade_units": course.units,
+            "grade_points": get_grade_points(grade, course.units)
+
+        }, HTTPStatus.OK
