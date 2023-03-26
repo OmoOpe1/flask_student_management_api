@@ -101,6 +101,35 @@ class GetUpdateDeleteStudent(Resource):
         student.delete()
         return { 'message': f"user {student.email} deleted successfully"}, HTTPStatus.OK
     
+@student_namespace.route('/student/<int:student_id>/gpa')
+class GetStudentGpa(Resource):
+
+    @jwt_required()
+    # @student_namespace.marshal_with(user_model)
+    def get(self, student_id):
+        """
+            Get student by id.
+        """
+        student = User.get_by_id(student_id)
+        courses = student.courses
+
+        tnu = 0
+        tgp = 0
+        for course in courses:
+            result = UserCourse.query.filter_by(course_id=course.id, user_id=student_id).first()
+            grade = get_grade(result.score)
+            gp = get_grade_points(grade, course.units)
+            tgp += gp
+            tnu += course.units
+
+        return {
+            "student_id": student.id,
+            "name": student.name,
+            "tnu": tnu,
+            "tgp": tgp,
+            "gpa": round(tgp/tnu, 2)
+        }, HTTPStatus.OK
+
 @student_namespace.route('/student/<int:student_id>/courses/register')
 class StudentRegisterCourse(Resource):
 
