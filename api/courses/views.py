@@ -23,6 +23,11 @@ course_model=course_namespace.model(
         'teacher': fields.String(required=True, description="A teacher's name"),
         'date_created': fields.String()
     })
+course_students_model=course_namespace.model(
+    'Students', {
+        'course': fields.String(),
+        'students': fields.List(fields.String())
+    })
 
 
 
@@ -71,11 +76,17 @@ class GetCourse(Resource):
         return course, HTTPStatus.OK
 
 @course_namespace.route('/course/<int:course_id>/students')
-class CreateCourse(Resource):
+class GetCourseStudents(Resource):
 
     @jwt_required()
-    def post(self, course_id):
+    @course_namespace.marshal_with(course_students_model)
+    def get(self, course_id):
         """
             Get course students by course id.
         """
-        pass
+        course = Course.get_by_id(course_id)
+
+        return {
+            "course": course.code,
+            "students": course.students
+        }
